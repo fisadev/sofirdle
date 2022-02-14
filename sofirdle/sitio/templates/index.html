@@ -1,0 +1,92 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script
+        type="text/javascript"
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous">
+    </script>
+    <script 
+        type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/brython/brython.min.js">
+    </script>
+    <script 
+        type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/brython/brython_stdlib.js">
+    </script>
+    <style>
+        td {
+            width: 20px;
+            padding: 5px;
+            background-color: #787c7e;
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body onload="brython()">
+
+    <h2>Sofirdle</h2>
+    <p>
+        <table id="progreso">
+
+
+        </table>
+    </p>
+    <p>
+        <input id="intento" type="text" placeholder="ingrese su intento aquí" />
+        <input id="intentar" type="button" value="Enter" />
+    </p>
+
+<script type="text/python">
+from browser import document, window
+
+jq = window.jQuery
+
+input_intento = jq("#intento")
+boton_intentar = jq("#intentar")
+progreso = jq("#progreso")
+
+palabra = "fisateama"
+
+progreso.append("<tr>" + "<td>?</td>" * len(palabra) + "</tr>")
+
+
+def on_input(*args, **kwargs):
+    intento = input_intento.val()
+    boton_intentar.prop("disabled", len(intento) != len(palabra))
+
+
+def on_intentar(*args, **kwargs):
+    intento = input_intento.val()
+    if len(intento) == len(palabra):
+        respuesta = ""
+        for ix, (char_correcto, char_intento) in enumerate(zip(palabra, intento)):
+            if char_correcto == char_intento:
+                color = "#6aaa64"
+            elif char_intento in palabra:
+                color = "#c9b458"
+            else:
+                color = "#787c7e"
+            respuesta += f"<td style='background-color:{color}'>{char_intento}</td>"
+
+        progreso.append(f"<tr>{respuesta}</tr>")
+
+        if intento == palabra:
+            input_intento.hide()
+            boton_intentar.hide()
+
+boton_intentar.prop("disabled", True)
+
+boton_intentar.bind("click", on_intentar)
+input_intento.bind("input", on_input)
+
+
+</script>
+
+</body>
+
+</html>
